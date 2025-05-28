@@ -250,7 +250,7 @@ def main():
         fallbacks=[CommandHandler("cancel", cancel)],
     )
 
-    # Додавання обробників
+    # Додавання обробниківвв
     application.add_handler(conv_handler)
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("users", users))
