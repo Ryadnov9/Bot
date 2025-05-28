@@ -1,0 +1,245 @@
+@prefix ex: <http://example.org/training#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Ontology
+<http://example.org/training#> rdf:type owl:Ontology .
+
+# Classes
+ex:User rdf:type owl:Class ;
+        rdfs:label "User"@en ;
+        rdfs:comment "A person with fitness goals and training recommendations"@en .
+ex:TrainingGoal rdf:type owl:Class ;
+                rdfs:label "Training Goal"@en .
+ex:WeightLossGoal rdfs:subClassOf ex:TrainingGoal .
+ex:MuscleGainGoal rdfs:subClassOf ex:TrainingGoal .
+ex:Workout rdf:type owl:Class ;
+           rdfs:label "Workout"@en .
+ex:CardioWorkout rdfs:subClassOf ex:Workout .
+ex:StrengthWorkout rdfs:subClassOf ex:Workout .
+ex:Recommendation rdf:type owl:Class ;
+                  rdfs:label "Recommendation"@en .
+ex:Progress rdf:type owl:Class ;
+            rdfs:label "Progress"@en .
+ex:Intensity rdf:type owl:Class .
+ex:Frequency rdf:type owl:Class .
+ex:CompetencyLevel rdf:type owl:Class .
+
+# User Properties
+ex:age rdf:type owl:DatatypeProperty ;
+       rdfs:domain ex:User ;
+       rdfs:range xsd:integer .
+ex:height rdf:type owl:DatatypeProperty ;
+          rdfs:domain ex:User ;
+          rdfs:range xsd:float .
+ex:weight rdf:type owl:DatatypeProperty ;
+          rdfs:domain ex:User ;
+          rdfs:range xsd:float .
+ex:fitnessLevel rdf:type owl:DatatypeProperty ;
+                rdfs:domain ex:User ;
+                rdfs:range ex:CompetencyLevel .
+ex:bodyMassIndex rdf:type owl:DatatypeProperty ;
+                 rdfs:domain ex:User ;
+                 rdfs:range xsd:float .
+ex:hasGoal rdf:type owl:ObjectProperty ;
+           rdfs:domain ex:User ;
+           rdfs:range ex:TrainingGoal .
+ex:experience rdf:type owl:DatatypeProperty ;
+              rdfs:domain ex:User ;
+              rdfs:range ex:CompetencyLevel .
+ex:preferredWorkoutType rdf:type owl:DatatypeProperty ;
+                        rdfs:domain ex:User ;
+                        rdfs:range xsd:string .
+ex:trainingFrequency rdf:type owl:DatatypeProperty ;
+                     rdfs:domain ex:User ;
+                     rdfs:range ex:Frequency .
+
+# Training Goal Properties
+ex:goalType rdf:type owl:DatatypeProperty ;
+            rdfs:domain ex:TrainingGoal ;
+            rdfs:range xsd:string .
+ex:requiredWorkoutType rdf:type owl:DatatypeProperty ;
+                       rdfs:domain ex:TrainingGoal ;
+                       rdfs:range xsd:string .
+ex:targetDuration rdf:type owl:DatatypeProperty ;
+                  rdfs:domain ex:TrainingGoal ;
+                  rdfs:range xsd:integer .
+ex:targetCalories rdf:type owl:DatatypeProperty ;
+                 rdfs:domain ex:TrainingGoal ;
+                 rdfs:range xsd:float .
+ex:intensityLevel rdf:type owl:DatatypeProperty ;
+                  rdfs:domain ex:TrainingGoal ;
+                  rdfs:range ex:Intensity .
+
+# Workout Properties
+ex:exercise rdf:type owl:DatatypeProperty ;
+            rdfs:domain ex:Workout ;
+            rdfs:range xsd:string .
+ex:intensity rdf:type owl:DatatypeProperty ;
+             rdfs:domain ex:Workout ;
+             rdfs:range ex:Intensity .
+ex:duration rdf:type owl:DatatypeProperty ;
+            rdfs:domain ex:Workout ;
+            rdfs:range xsd:integer .
+ex:category rdf:type owl:DatatypeProperty ;
+            rdfs:domain ex:Workout ;
+            rdfs:range xsd:string .
+ex:caloriesBurned rdf:type owl:DatatypeProperty ;
+                  rdfs:domain ex:Workout ;
+                  rdfs:range xsd:float .
+ex:suitableFor rdf:type owl:ObjectProperty ;
+              rdfs:domain ex:Workout ;
+              rdfs:range ex:TrainingGoal .
+ex:requiresExperience rdf:type owl:DatatypeProperty ;
+                      rdfs:domain ex:Workout ;
+                      rdfs:range ex:CompetencyLevel .
+ex:workoutFrequency rdf:type owl:DatatypeProperty ;
+                    rdfs:domain ex:Workout ;
+                    rdfs:range ex:Frequency .
+ex:requiredEquipment rdf:type owl:DatatypeProperty ;
+                     rdfs:domain ex:Workout ;
+                     rdfs:range xsd:string .
+ex:workoutLocation rdf:type owl:DatatypeProperty ;
+                   rdfs:domain ex:Workout ;
+                   rdfs:range xsd:string .
+ex:trainingLevel rdf:type owl:DatatypeProperty ;
+                 rdfs:domain ex:Workout ;
+                 rdfs:range ex:CompetencyLevel .
+
+# Recommendations
+ex:hasRecommendation rdf:type owl:ObjectProperty ;
+                     rdfs:domain ex:User ;
+                     rdfs:range ex:Workout .
+ex:recommendedFor rdf:type owl:ObjectProperty ;
+                  owl:inverseOf ex:hasRecommendation .
+ex:recommendsWorkout rdf:type owl:ObjectProperty ;
+                     rdfs:domain ex:Recommendation ;
+                     rdfs:range ex:Workout .
+ex:recommendationPriority rdf:type owl:DatatypeProperty ;
+                          rdfs:domain ex:Recommendation ;
+                          rdfs:range xsd:string .
+ex:recommendationDate rdf:type owl:DatatypeProperty ;
+                      rdfs:domain ex:Recommendation ;
+                      rdfs:range xsd:date .
+ex:recommendedByUser rdf:type owl:ObjectProperty ;
+                     rdfs:domain ex:Recommendation ;
+                     rdfs:range ex:User .
+ex:recommendationFrequency rdf:type owl:DatatypeProperty ;
+                           rdfs:domain ex:Recommendation ;
+                           rdfs:range ex:Frequency .
+ex:requiredExperienceLevel rdf:type owl:DatatypeProperty ;
+                           rdfs:domain ex:Recommendation ;
+                           rdfs:range ex:CompetencyLevel .
+
+# Progress
+ex:progressDate rdf:type owl:DatatypeProperty ;
+                rdfs:domain ex:Progress ;
+                rdfs:range xsd:date .
+ex:achievedCalories rdf:type owl:DatatypeProperty ;
+                    rdfs:domain ex:Progress ;
+                    rdfs:range xsd:float .
+ex:completedWorkout rdf:type owl:ObjectProperty ;
+                    rdfs:domain ex:Progress ;
+                    rdfs:range ex:Workout .
+ex:belongsToUser rdf:type owl:ObjectProperty ;
+                 rdfs:domain ex:Progress ;
+                 rdfs:range ex:User .
+
+# Individuals
+ex:Low rdf:type ex:Intensity .
+ex:Moderate rdf:type ex:Intensity .
+ex:High rdf:type ex:Intensity .
+ex:Daily rdf:type ex:Frequency .
+ex:Weekly rdf:type ex:Frequency .
+ex:Biweekly rdf:type ex:Frequency .
+ex:Beginner rdf:type ex:CompetencyLevel .
+ex:Intermediate rdf:type ex:CompetencyLevel .
+ex:Advanced rdf:type ex:CompetencyLevel .
+
+ex:User_John rdf:type ex:User ;
+             ex:age "30"^^xsd:integer ;
+             ex:height "1.75"^^xsd:float ;
+             ex:weight "70.0"^^xsd:float ;
+             ex:fitnessLevel ex:Intermediate ;
+             ex:bodyMassIndex "22.9"^^xsd:float ;
+             ex:hasGoal ex:Goal_LoseWeight ;
+             ex:experience ex:Intermediate ;
+             ex:preferredWorkoutType "Cardio" ;
+             ex:trainingFrequency ex:Weekly ;
+             ex:hasRecommendation ex:Workout_Cardio .
+
+ex:User_Anna rdf:type ex:User ;
+             ex:age "25"^^xsd:integer ;
+             ex:height "1.65"^^xsd:float ;
+             ex:weight "60.0"^^xsd:float ;
+             ex:fitnessLevel ex:Beginner ;
+             ex:bodyMassIndex "22.0"^^xsd:float ;
+             ex:hasGoal ex:Goal_MuscleGain ;
+             ex:experience ex:Beginner ;
+             ex:preferredWorkoutType "Strength" ;
+             ex:trainingFrequency ex:Biweekly ;
+             ex:hasRecommendation ex:Workout_Strength .
+
+ex:Goal_LoseWeight rdf:type ex:WeightLossGoal ;
+                   ex:goalType "Weight Loss" ;
+                   ex:requiredWorkoutType "Cardio" ;
+                   ex:targetDuration "60"^^xsd:integer ;
+                   ex:targetCalories "500.0"^^xsd:float ;
+                   ex:intensityLevel ex:Moderate .
+
+ex:Goal_MuscleGain rdf:type ex:MuscleGainGoal ;
+                   ex:goalType "Muscle Gain" ;
+                   ex:requiredWorkoutType "Strength" ;
+                   ex:targetDuration "45"^^xsd:integer ;
+                   ex:targetCalories "300.0"^^xsd:float ;
+                   ex:intensityLevel ex:High .
+
+ex:Workout_Cardio rdf:type ex:CardioWorkout ;
+                  ex:exercise "Running" ;
+                  ex:intensity ex:Moderate ;
+                  ex:duration "45"^^xsd:integer ;
+                  ex:category "Cardio" ;
+                  ex:caloriesBurned "400.0"^^xsd:float ;
+                  ex:suitableFor ex:Goal_LoseWeight ;
+                  ex:requiresExperience ex:Beginner ;
+                  ex:workoutFrequency ex:Weekly ;
+                  ex:requiredEquipment "None" ;
+                  ex:workoutLocation "Outdoor" ;
+                  ex:trainingLevel ex:Intermediate .
+
+ex:Workout_Strength rdf:type ex:StrengthWorkout ;
+                    ex:exercise "Weight Lifting" ;
+                    ex:intensity ex:High ;
+                    ex:duration "60"^^xsd:integer ;
+                    ex:category "Strength" ;
+                    ex:caloriesBurned "350.0"^^xsd:float ;
+                    ex:suitableFor ex:Goal_MuscleGain ;
+                    ex:requiresExperience ex:Intermediate ;
+                    ex:workoutFrequency ex:Biweekly ;
+                    ex:requiredEquipment "Dumbbells" ;
+                    ex:workoutLocation "Gym" ;
+                    ex:trainingLevel ex:Advanced .
+
+ex:Recommendation_1 rdf:type ex:Recommendation ;
+                    ex:recommendationPriority "High" ;
+                    ex:recommendationDate "2025-05-19"^^xsd:date ;
+                    ex:recommendedByUser ex:User_John ;
+                    ex:recommendsWorkout ex:Workout_Cardio ;
+                    ex:recommendationFrequency ex:Weekly ;
+                    ex:requiredExperienceLevel ex:Intermediate .
+
+ex:Recommendation_2 rdf:type ex:Recommendation ;
+                    ex:recommendationPriority "Medium" ;
+                    ex:recommendationDate "2025-05-18"^^xsd:date ;
+                    ex:recommendedByUser ex:User_Anna ;
+                    ex:recommendsWorkout ex:Workout_Strength ;
+                    ex:recommendationFrequency ex:Biweekly ;
+                    ex:requiredExperienceLevel ex:Beginner .
+
+ex:Progress_John_1 rdf:type ex:Progress ;
+                   ex:progressDate "2025-05-19"^^xsd:date ;
+                   ex:achievedCalories "400.0"^^xsd:float ;
+                   ex:completedWorkout ex:Workout_Cardio ;
+                   ex:belongsToUser ex:User_John .
