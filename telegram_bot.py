@@ -1,5 +1,6 @@
 import logging
 import re
+from collections import defaultdict
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -30,7 +31,7 @@ XSD = rdflib.Namespace("http://www.w3.org/2001/XMLSchema#")
 RDF = rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 
 # Стани для ConversationHandler
-NAME, AGE, HEIGHT, WEIGHT = range(4)
+NAME, AGE, HEIGHT, WEIGHT, ASSIGN_USER, ASSIGN_WORKOUT = range(6)
 
 # Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,7 +41,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/recommendations <користувач> - Отримати рекомендації тренувань для користувача\n"
         "/progress <користувач> - Переглянути прогрес користувача\n"
         "/create_user - Створити нового користувача з віком, зростом, вагою та ІМТ\n"
-        "Приклад: /recommendations User_John або /recommendations Користувач_Іван"
+        "/assign_workout - Призначити тренування користувачу"
     )
 
 # Перегляд усіх користувачів
@@ -68,51 +69,58 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Отримання рекомендацій для користувача
 async def recommendations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
-        await update.message.reply_text("Будь ласка, вкажіть ім'я користувача, наприклад, /recommendations User_John або /recommendations Користувач_Іван")
+        await update.message.reply_text("Будь ласка, вкажіть ім'я користувача, наприклад, /recommendations User_John")
         return
     user_name = context.args[0]
-    query = """
+    query = f"""
     PREFIX ex: <http://example.org/training#>
     SELECT ?workout ?exercise ?intensity ?duration ?calories
-    WHERE {
+    WHERE {{
         ?user a ex:User ;
               ex:маєРекомендацію ?workout .
         ?workout ex:вправа ?exercise ;
                  ex:інтенсивність ?intensity ;
                  ex:тривалість ?duration ;
                  ex:спаленіКалорії ?calories .
-        FILTER (STR(?user) = "http://example.org/training#%s")
-    }
+        FILTER (STR(?user) = "http://example.org/training#{user_name}")
+    }}
     """
-    query = query % user_name
     results = g.query(query)
-    response = f"Рекомендації для {user_name}:\n"
+    workouts = defaultdict(list)
     for row in results:
         workout_uri = row.workout.split('#')[-1]
         intensity = row.intensity.split('#')[-1]
-        response += f"Тренування: {workout_uri}, Вправа: {row.exercise}, Інтенсивність: {intensity}, Тривалість: {row.duration} хв, Калорії: {row.calories}\n"
-    await update.message.reply_text(response or f"Рекомендацій для {user_name} не знайдено.")
+        workouts[workout_uri].append(
+            f"• Вправа: {row.exercise}\n  Інтенсивність: {intensity}, Тривалість: {row.duration} хв, Калорії: {row.calories}"
+        )
+
+    if workouts:
+        response = f"Рекомендації для {user_name}:\n"
+        for workout, details in workouts.items():
+            response += f"\nТренування: {workout}\n" + "\n".join(details) + "\n"
+    else:
+        response = f"Рекомендацій для {user_name} не знайдено."
+    await update.message.reply_text(response)
 
 # Перегляд прогресу користувача
 async def progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
-        await update.message.reply_text("Будь ласка, вкажіть ім'я користувача, наприклад, /progress User_John або /progress Користувач_Іван")
+        await update.message.reply_text("Будь ласка, вкажіть ім'я користувача, наприклад, /progress User_John")
         return
     user_name = context.args[0]
-    query = """
+    query = f"""
     PREFIX ex: <http://example.org/training#>
     SELECT ?progress ?date ?calories ?workout ?exercise
-    WHERE {
+    WHERE {{
         ?progress a ex:Progress ;
                   ex:датаПрогресу ?date ;
                   ex:досягнутіКалорії ?calories ;
                   ex:виконанеТренування ?workout ;
                   ex:належитьКористувачу ?user .
         ?workout ex:вправа ?exercise .
-        FILTER (STR(?user) = "http://example.org/training#%s")
-    }
+        FILTER (STR(?user) = "http://example.org/training#{user_name}")
+    }}
     """
-    query = query % user_name
     results = g.query(query)
     response = f"Прогрес для {user_name}:\n"
     for row in results:
@@ -124,121 +132,144 @@ async def progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Створення користувача: Початок
 async def create_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Будь ласка, введіть ім'я користувача (наприклад, Користувач_Іван або Ivan_2025). "
-        "Ім'я може бути українською мовою, але не повинно містити пробілів чи спеціальних символів, крім '_' або '-'."
+        "Введіть ім'я користувача (наприклад, Ivan_2025):"
     )
     return NAME
 
 # Обробка імені
 async def receive_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.message.text.strip()
-    # Перевірка валідності імені для URI (лише літери, цифри, '_', '-')
     if not re.match(r'^[\w\-]+$', user_name):
-        await update.message.reply_text(
-            "Ім'я містить некоректні символи. Використовуйте лише літери, цифри, '_' або '-'. "
-            "Наприклад: Користувач_Іван, Ivan_2025. Спробуйте ще раз:"
-        )
+        await update.message.reply_text("Ім'я містить некоректні символи. Спробуйте ще раз:")
         return NAME
-    # Перевірка, чи існує користувач
-    query = """
+    query = f"""
     PREFIX ex: <http://example.org/training#>
-    ASK WHERE { ex:%s a ex:User }
+    ASK WHERE {{ ex:{user_name} a ex:User }}
     """
-    if g.query(query % user_name).askAnswer:
-        await update.message.reply_text("Користувач з таким ім'ям уже існує. Виберіть інше ім'я:")
+    if g.query(query).askAnswer:
+        await update.message.reply_text("Користувач вже існує. Виберіть інше ім'я:")
         return NAME
     context.user_data["name"] = user_name
-    await update.message.reply_text("Введіть вік користувача (наприклад, 25):")
+    await update.message.reply_text("Введіть вік користувача:")
     return AGE
 
-# Обробка віку
+# Вік
 async def receive_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         age = int(update.message.text.strip())
         if age < 0 or age > 120:
-            await update.message.reply_text("Будь ласка, введіть коректний вік (0-120):")
-            return AGE
+            raise ValueError
         context.user_data["age"] = age
-        await update.message.reply_text("Введіть зріст користувача в метрах (наприклад, 1.75):")
+        await update.message.reply_text("Введіть зріст у метрах:")
         return HEIGHT
     except ValueError:
-        await update.message.reply_text("Будь ласка, введіть коректне ціле число для віку:")
+        await update.message.reply_text("Некоректний вік. Спробуйте ще раз:")
         return AGE
 
-# Обробка зросту
+# Зріст
 async def receive_height(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         height = float(update.message.text.strip())
         if height <= 0 or height > 3:
-            await update.message.reply_text("Будь ласка, введіть коректний зріст у метрах (0-3):")
-            return HEIGHT
+            raise ValueError
         context.user_data["height"] = height
-        await update.message.reply_text("Введіть вагу користувача в кілограмах (наприклад, 70.0):")
+        await update.message.reply_text("Введіть вагу в кг:")
         return WEIGHT
     except ValueError:
-        await update.message.reply_text("Будь ласка, введіть коректне число для зросту:")
+        await update.message.reply_text("Некоректний зріст. Спробуйте ще раз:")
         return HEIGHT
 
-# Обробка ваги та створення користувача
+# Вага
 async def receive_weight(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         weight = float(update.message.text.strip())
         if weight <= 0 or weight > 300:
-            await update.message.reply_text("Будь ласка, введіть коректну вагу в кілограмах (0-300):")
-            return WEIGHT
+            raise ValueError
         user_name = context.user_data["name"]
         age = context.user_data["age"]
         height = context.user_data["height"]
-
-        # Обчислення ІМТ
         bmi = round(weight / (height * height), 1)
 
-        # Створення користувача в онтології
         user_uri = EX[user_name]
         g.add((user_uri, RDF.type, EX.User))
         g.add((user_uri, EX.вік, rdflib.Literal(age, datatype=XSD.integer)))
         g.add((user_uri, EX.зріст, rdflib.Literal(height, datatype=XSD.float)))
         g.add((user_uri, EX.вага, rdflib.Literal(weight, datatype=XSD.float)))
         g.add((user_uri, EX.індексМасиТіла, rdflib.Literal(bmi, datatype=XSD.float)))
-        g.add((user_uri, EX.рівеньФітнесу, EX.Beginner))  # За замовчуванням
-        g.add((user_uri, EX.досвід, EX.Beginner))  # За замовчуванням
+        g.add((user_uri, EX.рівеньФітнесу, EX.Beginner))
+        g.add((user_uri, EX.досвід, EX.Beginner))
 
-        # Збереження оновленої онтології
-        try:
-            g.serialize(destination="SPARQL.ttl", format="n3")
-            await update.message.reply_text(
-                f"Користувача {user_name} успішно створено!\n"
-                f"Вік: {age}, Зріст: {height} м, Вага: {weight} кг, ІМТ: {bmi}"
-            )
-        except Exception as e:
-            logger.error(f"Помилка збереження онтології: {e}")
-            await update.message.reply_text("Помилка при збереженні користувача в онтологію. Спробуйте ще раз.")
-            return ConversationHandler.END
-
-        # Очищення даних користувача
+        g.serialize(destination="SPARQL.ttl", format="n3")
+        await update.message.reply_text(f"Користувача {user_name} створено! ІМТ: {bmi}")
         context.user_data.clear()
         return ConversationHandler.END
     except ValueError:
-        await update.message.reply_text("Будь ласка, введіть коректне число для ваги:")
+        await update.message.reply_text("Некоректна вага. Спробуйте ще раз:")
         return WEIGHT
 
-# Скасування створення користувача
+# Скасування
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
-    await update.message.reply_text("Створення користувача скасовано.")
+    await update.message.reply_text("Операцію скасовано.")
     return ConversationHandler.END
+
+# Призначення тренування
+async def assign_workout_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Введіть ім'я користувача:")
+    return ASSIGN_USER
+
+async def assign_workout_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_name = update.message.text.strip()
+    query = f"""
+    PREFIX ex: <http://example.org/training#>
+    ASK WHERE {{ ex:{user_name} a ex:User }}
+    """
+    if not g.query(query).askAnswer:
+        await update.message.reply_text("Користувача не знайдено. Спробуйте ще раз.")
+        return ASSIGN_USER
+
+    context.user_data["assign_user"] = user_name
+    query = """
+    PREFIX ex: <http://example.org/training#>
+    SELECT ?workout WHERE { ?workout a ex:Workout. }
+    """
+    results = g.query(query)
+    workouts = [row.workout.split('#')[-1] for row in results]
+    if not workouts:
+        await update.message.reply_text("Тренувань не знайдено.")
+        return ConversationHandler.END
+    context.user_data["available_workouts"] = workouts
+    workout_list = "\n".join(f"{i+1}. {w}" for i, w in enumerate(workouts))
+    await update.message.reply_text(f"Виберіть номер тренування:\n{workout_list}")
+    return ASSIGN_WORKOUT
+
+async def assign_workout_choose(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        index = int(update.message.text.strip()) - 1
+        workouts = context.user_data["available_workouts"]
+        if not (0 <= index < len(workouts)):
+            raise ValueError
+        user_name = context.user_data["assign_user"]
+        workout_name = workouts[index]
+        g.add((EX[user_name], EX.маєРекомендацію, EX[workout_name]))
+        g.serialize(destination="SPARQL.ttl", format="n3")
+        await update.message.reply_text(f"Тренування '{workout_name}' призначено {user_name} ✅")
+        context.user_data.clear()
+        return ConversationHandler.END
+    except Exception:
+        await update.message.reply_text("Некоректний вибір. Введіть номер ще раз:")
+        return ASSIGN_WORKOUT
 
 # Обробка помилок
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.error(f"Оновлення {update} викликало помилку {context.error}")
     await update.message.reply_text("Сталася помилка. Спробуйте ще раз.")
 
+# Головна функція
 def main():
-    # Замініть 'YOUR_BOT_TOKEN' на ваш токен бота від BotFather
     bot_token = "7973391875:AAHAT7xxc3TWp2ABRI-J3b5_0DhX-FPMWJ4"
     application = Application.builder().token(bot_token).build()
 
-    # Обробник діалогу для створення користувача
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("create_user", create_user)],
         states={
@@ -250,15 +281,22 @@ def main():
         fallbacks=[CommandHandler("cancel", cancel)],
     )
 
-    # Додавання обробниківвв
+    assign_handler = ConversationHandler(
+        entry_points=[CommandHandler("assign_workout", assign_workout_start)],
+        states={
+            ASSIGN_USER: [MessageHandler(filters.TEXT & ~filters.COMMAND, assign_workout_user)],
+            ASSIGN_WORKOUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, assign_workout_choose)],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
+    )
+
     application.add_handler(conv_handler)
+    application.add_handler(assign_handler)
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("users", users))
     application.add_handler(CommandHandler("recommendations", recommendations))
     application.add_handler(CommandHandler("progress", progress))
     application.add_error_handler(error_handler)
-
-    # Запуск бота
     application.run_polling()
 
 if __name__ == '__main__':
