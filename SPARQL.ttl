@@ -1,504 +1,415 @@
-@prefix : <http://example.org/training#> .
 @prefix ex: <http://example.org/training#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://example.org/training#> .
-
-<http://example.org/training#> rdf:type owl:Ontology .
-
-#################################################################
-#    Annotation properties
-#################################################################
-
-###  http://example.org/training#вимагаєДосвиду
-ex:вимагаєДосвиду rdf:type owl:AnnotationProperty .
-
-###  http://example.org/training#необхіднийРівеньДосвиду
-ex:необхіднийРівеньДосвиду rdf:type owl:AnnotationProperty .
-
-#################################################################
-#    Datatypes
-#################################################################
-
-###  http://www.w3.org/2001/XMLSchema#date
-xsd:date rdf:type rdfs:Datatype .
-
-#################################################################
-#    Object Properties
-#################################################################
-
-###  http://example.org/training#виконанеТренування
-ex:виконанеТренування rdf:type owl:ObjectProperty ;
-                      rdfs:domain ex:Progress ;
-                      rdfs:range ex:Workout .
-
-###  http://example.org/training#вимагаєДосвиду
-ex:вимагаєДосвиду rdf:type owl:ObjectProperty ;
-                  rdfs:domain ex:Workout ;
-                  rdfs:range ex:CompetencyLevel .
-
-###  http://example.org/training#досвід
-ex:досвід rdf:type owl:ObjectProperty ;
-          rdfs:domain ex:User ;
-          rdfs:range ex:CompetencyLevel .
-
-###  http://example.org/training#маєРекомендацію
-ex:маєРекомендацію rdf:type owl:ObjectProperty ;
-                   owl:inverseOf ex:рекомендуєтьсяДля ;
-                   rdfs:domain ex:User ;
-                   rdfs:range ex:Workout .
-
-###  http://example.org/training#маєЦіль
-ex:маєЦіль rdf:type owl:ObjectProperty ;
-           rdfs:domain ex:User ;
-           rdfs:range ex:TrainingGoal .
-
-###  http://example.org/training#належитьКористувачу
-ex:належитьКористувачу rdf:type owl:ObjectProperty ;
-                       rdfs:domain ex:Progress ;
-                       rdfs:range ex:User .
-
-###  http://example.org/training#необхіднийРівеньДосвиду
-ex:необхіднийРівеньДосвиду rdf:type owl:ObjectProperty ;
-                           rdfs:domain ex:Recommendation ;
-                           rdfs:range ex:CompetencyLevel .
-
-###  http://example.org/training#підходитьДля
-ex:підходитьДля rdf:type owl:ObjectProperty ;
-                rdfs:domain ex:Workout ;
-                rdfs:range ex:TrainingGoal .
-
-###  http://example.org/training#рекомендуєТренування
-ex:рекомендуєТренування rdf:type owl:ObjectProperty ;
-                        rdfs:domain ex:Recommendation ;
-                        rdfs:range ex:Workout .
-
-###  http://example.org/training#рекомендуєтьсяДля
-ex:рекомендуєтьсяДля rdf:type owl:ObjectProperty .
-
-###  http://example.org/training#рекомендуєтьсяКористувачем
-ex:рекомендуєтьсяКористувачем rdf:type owl:ObjectProperty ;
-                              rdfs:domain ex:Recommendation ;
-                              rdfs:range ex:User .
-
-###  http://example.org/training#рівеньТренування
-ex:рівеньТренування rdf:type owl:ObjectProperty ;
-                    rdfs:domain ex:Workout ;
-                    rdfs:range ex:CompetencyLevel .
-
-###  http://example.org/training#рівеньФітнесу
-ex:рівеньФітнесу rdf:type owl:ObjectProperty ;
-                 rdfs:domain ex:User ;
-                 rdfs:range ex:CompetencyLevel .
-
-###  http://example.org/training#частотаРекомендації
-ex:частотаРекомендації rdf:type owl:ObjectProperty ;
-                       rdfs:domain ex:Recommendation ;
-                       rdfs:range ex:Frequency .
-
-###  http://example.org/training#частотаТренування
-ex:частотаТренування rdf:type owl:ObjectProperty ;
-                     rdfs:domain ex:Workout ;
-                     rdfs:range ex:Frequency .
-
-###  http://example.org/training#частотаТренувань
-ex:частотаТренувань rdf:type owl:ObjectProperty ;
-                    rdfs:domain ex:User ;
-                    rdfs:range ex:Frequency .
-
-###  http://example.org/training#інтенсивність
-ex:інтенсивність rdf:type owl:ObjectProperty ;
-                 rdfs:domain ex:Workout ;
-                 rdfs:range ex:Intensity .
-
-###  http://example.org/training#інтенсивністьЦілі
-ex:інтенсивністьЦілі rdf:type owl:ObjectProperty ;
-                     rdfs:domain ex:TrainingGoal ;
-                     rdfs:range ex:Intensity .
-
-#################################################################
-#    Data properties
-#################################################################
-
-###  http://example.org/training#вага
-ex:вага rdf:type owl:DatatypeProperty ;
-        rdfs:domain ex:User ;
-        rdfs:range xsd:float .
-
-###  http://example.org/training#вимагаєДосвиду
-ex:вимагаєДосвиду rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#вправа
-ex:вправа rdf:type owl:DatatypeProperty ;
-          rdfs:domain ex:Workout ;
-          rdfs:range xsd:string .
-
-###  http://example.org/training#вік
-ex:вік rdf:type owl:DatatypeProperty ;
-       rdfs:domain ex:User ;
-       rdfs:range xsd:integer .
-
-###  http://example.org/training#датаПрогресу
-ex:датаПрогресу rdf:type owl:DatatypeProperty ;
-                rdfs:domain ex:Progress ;
-                rdfs:range xsd:date .
-
-###  http://example.org/training#датаРекомендації
-ex:датаРекомендації rdf:type owl:DatatypeProperty ;
-                    rdfs:domain ex:Recommendation ;
-                    rdfs:range xsd:date .
-
-###  http://example.org/training#досвід
-ex:досвід rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#досягнутіКалорії
-ex:досягнутіКалорії rdf:type owl:DatatypeProperty ;
-                    rdfs:domain ex:Progress ;
-                    rdfs:range xsd:float .
-
-###  http://example.org/training#зріст
-ex:зріст rdf:type owl:DatatypeProperty ;
-         rdfs:domain ex:User ;
-         rdfs:range xsd:float .
-
-###  http://example.org/training#категорія
-ex:категорія rdf:type owl:DatatypeProperty ;
-             rdfs:domain ex:Workout ;
-             rdfs:range xsd:string .
-
-###  http://example.org/training#місцеТренування
-ex:місцеТренування rdf:type owl:DatatypeProperty ;
-                   rdfs:domain ex:Workout ;
-                   rdfs:range xsd:string .
-
-###  http://example.org/training#необхіднеОбладнання
-ex:необхіднеОбладнання rdf:type owl:DatatypeProperty ;
-                       rdfs:domain ex:Workout ;
-                       rdfs:range xsd:string .
-
-###  http://example.org/training#необхіднийРівеньДосвиду
-ex:необхіднийРівеньДосвиду rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#необхіднийТипТренування
-ex:необхіднийТипТренування rdf:type owl:DatatypeProperty ;
-                           rdfs:domain ex:TrainingGoal ;
-                           rdfs:range xsd:string .
-
-###  http://example.org/training#пріоритетРекомендації
-ex:пріоритетРекомендації rdf:type owl:DatatypeProperty ;
-                         rdfs:domain ex:Recommendation ;
-                         rdfs:range xsd:string .
-
-###  http://example.org/training#рівеньТренування
-ex:рівеньТренування rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#рівеньФітнесу
-ex:рівеньФітнесу rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#спаленіКалорії
-ex:спаленіКалорії rdf:type owl:DatatypeProperty ;
-                  rdfs:domain ex:Workout ;
-                  rdfs:range xsd:float .
-
-###  http://example.org/training#типЦілі
-ex:типЦілі rdf:type owl:DatatypeProperty ;
-           rdfs:domain ex:TrainingGoal ;
-           rdfs:range xsd:string .
-
-###  http://example.org/training#тривалість
-ex:тривалість rdf:type owl:DatatypeProperty ;
-              rdfs:domain ex:Workout ;
-              rdfs:range xsd:integer .
-
-###  http://example.org/training#улюбленийТипТренування
-ex:улюбленийТипТренування rdf:type owl:DatatypeProperty ;
-                          rdfs:domain ex:User ;
-                          rdfs:range xsd:string .
-
-###  http://example.org/training#цільоваТривалість
-ex:цільоваТривалість rdf:type owl:DatatypeProperty ;
-                     rdfs:domain ex:TrainingGoal ;
-                     rdfs:range xsd:integer .
-
-###  http://example.org/training#цільовіКалорії
-ex:цільовіКалорії rdf:type owl:DatatypeProperty ;
-                  rdfs:domain ex:TrainingGoal ;
-                  rdfs:range xsd:float .
-
-###  http://example.org/training#частотаРекомендації
-ex:частотаРекомендації rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#частотаТренування
-ex:частотаТренування rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#частотаТренувань
-ex:частотаТренувань rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#індексМасиТіла
-ex:індексМасиТіла rdf:type owl:DatatypeProperty ;
-                  rdfs:domain ex:User ;
-                  rdfs:range xsd:float .
-
-###  http://example.org/training#інтенсивність
-ex:інтенсивність rdf:type owl:DatatypeProperty .
-
-###  http://example.org/training#інтенсивністьЦілі
-ex:інтенсивністьЦілі rdf:type owl:DatatypeProperty .
-
-#################################################################
-#    Classes
-#################################################################
-
-###  http://example.org/training#CardioWorkout
-ex:CardioWorkout rdf:type owl:Class ;
-                 rdfs:subClassOf ex:Workout .
-
-###  http://example.org/training#CompetencyLevel
-ex:CompetencyLevel rdf:type owl:Class .
-
-###  http://example.org/training#Frequency
-ex:Frequency rdf:type owl:Class .
-
-###  http://example.org/training#Intensity
-ex:Intensity rdf:type owl:Class .
-
-###  http://example.org/training#MuscleGainGoal
-ex:MuscleGainGoal rdf:type owl:Class ;
-                  rdfs:subClassOf ex:TrainingGoal .
-
-###  http://example.org/training#Progress
-ex:Progress rdf:type owl:Class ;
-            rdfs:label "Progress"@en .
-
-###  http://example.org/training#Recommendation
-ex:Recommendation rdf:type owl:Class ;
-                  rdfs:label "Recommendation"@en .
-
-###  http://example.org/training#StrengthWorkout
-ex:StrengthWorkout rdf:type owl:Class ;
-                   rdfs:subClassOf ex:Workout .
-
-###  http://example.org/training#TrainingGoal
-ex:TrainingGoal rdf:type owl:Class ;
-                rdfs:label "Training Goal"@en .
-
-###  http://example.org/training#User
-ex:User rdf:type owl:Class ;
-        rdfs:comment "A person with fitness goals and training recommendations"@en ;
-        rdfs:label "User"@en .
-
-###  http://example.org/training#WeightLossGoal
-ex:WeightLossGoal rdf:type owl:Class ;
-                  rdfs:subClassOf ex:TrainingGoal .
-
-###  http://example.org/training#Workout
-ex:Workout rdf:type owl:Class ;
-           rdfs:label "Workout"@en .
-
-#################################################################
-#    Individuals
-#################################################################
-
-###  http://example.org/training#Advanced
-ex:Advanced rdf:type owl:NamedIndividual ,
-                     ex:CompetencyLevel .
-
-###  http://example.org/training#Beginner
-ex:Beginner rdf:type owl:NamedIndividual ,
-                     ex:CompetencyLevel .
-
-###  http://example.org/training#Biweekly
-ex:Biweekly rdf:type owl:NamedIndividual ,
-                     ex:Frequency .
-
-###  http://example.org/training#Daily
-ex:Daily rdf:type owl:NamedIndividual ,
-                  ex:Frequency .
-
-###  http://example.org/training#Goal_LoseWeight
-ex:Goal_LoseWeight rdf:type owl:NamedIndividual ,
-                            ex:WeightLossGoal ;
-                   ex:інтенсивністьЦілі ex:Moderate ;
-                   ex:необхіднийТипТренування "Cardio" ;
-                   ex:типЦілі "Weight Loss" ;
-                   ex:цільоваТривалість 60 ;
-                   ex:цільовіКалорії "500.0"^^xsd:float .
-
-###  http://example.org/training#Goal_MuscleGain
-ex:Goal_MuscleGain rdf:type owl:NamedIndividual ,
-                            ex:MuscleGainGoal ;
-                   ex:інтенсивністьЦілі ex:High ;
-                   ex:необхіднийТипТренування "Strength" ;
-                   ex:типЦілі "Muscle Gain" ;
-                   ex:цільоваТривалість 45 ;
-                   ex:цільовіКалорії "300.0"^^xsd:float .
-
-###  http://example.org/training#High
-ex:High rdf:type owl:NamedIndividual ,
-                 ex:Intensity .
-
-###  http://example.org/training#Intermediate
-ex:Intermediate rdf:type owl:NamedIndividual ,
-                         ex:CompetencyLevel .
-
-###  http://example.org/training#Low
-ex:Low rdf:type owl:NamedIndividual ,
-                ex:Intensity .
-
-###  http://example.org/training#Moderate
-ex:Moderate rdf:type owl:NamedIndividual ,
-                     ex:Intensity .
-
-###  http://example.org/training#Progress_John_1
-ex:Progress_John_1 rdf:type owl:NamedIndividual ,
-                            ex:Progress ;
-                   ex:виконанеТренування ex:Workout_Cardio ;
-                   ex:належитьКористувачу ex:User_John ;
-                   ex:датаПрогресу "2025-05-19"^^xsd:date ;
-                   ex:досягнутіКалорії "400.0"^^xsd:float .
-
-###  http://example.org/training#Recommendation_1
-ex:Recommendation_1 rdf:type owl:NamedIndividual ,
-                             ex:Recommendation ;
-                    ex:рекомендуєТренування ex:Workout_Cardio ;
-                    ex:рекомендуєтьсяКористувачем ex:User_John ;
-                    ex:частотаРекомендації ex:Weekly ;
-                    ex:датаРекомендації "2025-05-19"^^xsd:date ;
-                    ex:пріоритетРекомендації "High" ;
-                    ex:необхіднийРівеньДосвиду ex:Intermediate .
-
-###  http://example.org/training#Recommendation_2
-ex:Recommendation_2 rdf:type owl:NamedIndividual ,
-                             ex:Recommendation ;
-                    ex:рекомендуєТренування ex:Workout_Strength ;
-                    ex:рекомендуєтьсяКористувачем ex:User_Anna ;
-                    ex:частотаРекомендації ex:Biweekly ;
-                    ex:датаРекомендації "2025-05-18"^^xsd:date ;
-                    ex:пріоритетРекомендації "Medium" ;
-                    ex:необхіднийРівеньДосвиду ex:Beginner .
-
-###  http://example.org/training#User_Anna
-ex:User_Anna rdf:type owl:NamedIndividual ,
-                      ex:User ;
-             ex:досвід ex:Beginner ;
-             ex:маєРекомендацію ex:Workout_Strength ;
-             ex:маєЦіль ex:Goal_MuscleGain ;
-             ex:рівеньФітнесу ex:Beginner ;
-             ex:частотаТренувань ex:Biweekly ;
-             ex:вага "60.0"^^xsd:float ;
-             ex:вік 25 ;
-             ex:зріст "1.65"^^xsd:float ;
-             ex:улюбленийТипТренування "Strength" ;
-             ex:індексМасиТіла "22.0"^^xsd:float .
-
-###  http://example.org/training#User_John
-ex:User_John rdf:type owl:NamedIndividual ,
-                      ex:User ;
-             ex:досвід ex:Intermediate ;
-             ex:маєРекомендацію ex:Workout_Cardio ;
-             ex:маєЦіль ex:Goal_LoseWeight ;
-             ex:рівеньФітнесу ex:Intermediate ;
-             ex:частотаТренувань ex:Weekly ;
-             ex:вага "70.0"^^xsd:float ;
-             ex:вік 30 ;
-             ex:зріст "1.75"^^xsd:float ;
-             ex:улюбленийТипТренування "Cardio" ;
-             ex:індексМасиТіла "22.9"^^xsd:float .
-
-###  http://example.org/training#Weekly
-ex:Weekly rdf:type owl:NamedIndividual ,
-                   ex:Frequency .
-
-###  http://example.org/training#Workout_Cardio
-ex:Workout_Cardio rdf:type owl:NamedIndividual ,
-                           ex:CardioWorkout ;
-                  ex:вимагаєДосвиду ex:Beginner ;
-                  ex:підходитьДля ex:Goal_LoseWeight ;
-                  ex:рівеньТренування ex:Intermediate ;
-                  ex:частотаТренування ex:Weekly ;
-                  ex:інтенсивність ex:Moderate ;
-                  ex:вправа "Running" ;
-                  ex:категорія "Cardio" ;
-                  ex:місцеТренування "Outdoor" ;
-                  ex:необхіднеОбладнання "None" ;
-                  ex:спаленіКалорії "400.0"^^xsd:float ;
-                  ex:тривалість 45 .
-
-###  http://example.org/training#Workout_Strength
-ex:Workout_Strength rdf:type owl:NamedIndividual ,
-                             ex:StrengthWorkout ;
-                    ex:підходитьДля ex:Goal_MuscleGain ;
-                    ex:рівеньТренування ex:Advanced ;
-                    ex:частотаТренування ex:Biweekly ;
-                    ex:інтенсивність ex:High ;
-                    ex:вправа "Weight Lifting" ;
-                    ex:категорія "Strength" ;
-                    ex:місцеТренування "Gym" ;
-                    ex:необхіднеОбладнання "Dumbbells" ;
-                    ex:спаленіКалорії "350.0"^^xsd:float ;
-                    ex:тривалість 60 ;
-                    ex:вимагаєДосвиду ex:Intermediate .
-
-###  http://example.org/training#Workout_Yoga
-ex:Workout_Yoga rdf:type owl:NamedIndividual ,
-                         ex:CardioWorkout ;
-                ex:вимагаєДосвиду ex:Beginner ;
-                ex:підходитьДля ex:Goal_LoseWeight ;
-                ex:рівеньТренування ex:Beginner ;
-                ex:частотаТренування ex:Weekly ;
-                ex:інтенсивність ex:Low ;
-                ex:вправа "Yoga Flow" ;
-                ex:категорія "Cardio" ;
-                ex:місцеТренування "Home" ;
-                ex:необхіднеОбладнання "Yoga Mat" ;
-                ex:спаленіКалорії "200.0"^^xsd:float ;
-                ex:тривалість 30 .
-
-###  http://example.org/training#Workout_HIIT
-ex:Workout_HIIT rdf:type owl:NamedIndividual ,
-                         ex:CardioWorkout ;
-                ex:вимагаєДосвиду ex:Intermediate ;
-                ex:підходитьДля ex:Goal_LoseWeight ;
-                ex:рівеньТренування ex:Advanced ;
-                ex:частотаТренування ex:Biweekly ;
-                ex:інтенсивність ex:High ;
-                ex:вправа "High-Intensity Interval Training" ;
-                ex:категорія "Cardio" ;
-                ex:місцеТренування "Gym or Home" ;
-                ex:необхіднеОбладнання "None" ;
-                ex:спаленіКалорії "500.0"^^xsd:float ;
-                ex:тривалість 20 .
-
-###  http://example.org/training#Workout_Swimming
-ex:Workout_Swimming rdf:type owl:NamedIndividual ,
-                             ex:CardioWorkout ;
-                    ex:вимагаєДосвиду ex:Beginner ;
-                    ex:підходитьДля ex:Goal_LoseWeight ;
-                    ex:рівеньТренування ex:Intermediate ;
-                    ex:частотаТренування ex:Weekly ;
-                    ex:інтенсивність ex:Moderate ;
-                    ex:вправа "Swimming" ;
-                    ex:категорія "Cardio" ;
-                    ex:місцеТренування "Pool" ;
-                    ex:необхіднеОбладнання "Swimsuit" ;
-                    ex:спаленіКалорії "450.0"^^xsd:float ;
-                    ex:тривалість 45 .
-
-###  http://example.org/training#Workout_Squats
-ex:Workout_Squats rdf:type owl:NamedIndividual ,
-                           ex:StrengthWorkout ;
-                  ex:вимагаєДосвиду ex:Beginner ;
-                  ex:підходитьДля ex:Goal_MuscleGain ;
-                  ex:рівеньТренування ex:Beginner ;
-                  ex:частотаТренування ex:Weekly ;
-                  ex:інтенсивність ex:Moderate ;
-                  ex:вправа "Bodyweight Squats" ;
-                  ex:категорія "Strength" ;
-                  ex:місцеТренування "Home or Gym" ;
-                  ex:необхіднеОбладнання "None" ;
-                  ex:спаленіКалорії "250.0"^^xsd:float ;
-                  ex:тривалість 30 .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex: a owl:Ontology .
+
+ex:Daily a ex:Frequency,
+        owl:NamedIndividual .
+
+ex:Progress_John_1 a ex:Progress,
+        owl:NamedIndividual ;
+    ex:виконанеТренування ex:Workout_Cardio ;
+    ex:датаПрогресу "2025-05-19"^^xsd:date ;
+    ex:досягнутіКалорії "400.0"^^xsd:float ;
+    ex:належитьКористувачу ex:User_John .
+
+ex:Recommendation_1 a ex:Recommendation,
+        owl:NamedIndividual ;
+    ex:датаРекомендації "2025-05-19"^^xsd:date ;
+    ex:необхіднийРівеньДосвиду ex:Intermediate ;
+    ex:пріоритетРекомендації "High" ;
+    ex:рекомендуєТренування ex:Workout_Cardio ;
+    ex:рекомендуєтьсяКористувачем ex:User_John ;
+    ex:частотаРекомендації ex:Weekly .
+
+ex:Recommendation_2 a ex:Recommendation,
+        owl:NamedIndividual ;
+    ex:датаРекомендації "2025-05-18"^^xsd:date ;
+    ex:необхіднийРівеньДосвиду ex:Beginner ;
+    ex:пріоритетРекомендації "Medium" ;
+    ex:рекомендуєТренування ex:Workout_Strength ;
+    ex:рекомендуєтьсяКористувачем ex:User_Anna ;
+    ex:частотаРекомендації ex:Biweekly .
+
+ex:Workout_Cardio_2 a ex:Workout ;
+    ex:вправа "Біг на місці" ;
+    ex:спаленіКалорії 150 ;
+    ex:тривалість 20 ;
+    ex:інтенсивність ex:Medium .
+
+ex:Workout_HIIT a ex:CardioWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Intermediate ;
+    ex:вправа "High-Intensity Interval Training" ;
+    ex:категорія "Cardio" ;
+    ex:місцеТренування "Gym or Home" ;
+    ex:необхіднеОбладнання "None" ;
+    ex:підходитьДля ex:Goal_LoseWeight ;
+    ex:рівеньТренування ex:Advanced ;
+    ex:спаленіКалорії "500.0"^^xsd:float ;
+    ex:тривалість 20 ;
+    ex:частотаТренування ex:Biweekly ;
+    ex:інтенсивність ex:High .
+
+ex:Workout_Squats a ex:StrengthWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Beginner ;
+    ex:вправа "Bodyweight Squats" ;
+    ex:категорія "Strength" ;
+    ex:місцеТренування "Home or Gym" ;
+    ex:необхіднеОбладнання "None" ;
+    ex:підходитьДля ex:Goal_MuscleGain ;
+    ex:рівеньТренування ex:Beginner ;
+    ex:спаленіКалорії "250.0"^^xsd:float ;
+    ex:тривалість 30 ;
+    ex:частотаТренування ex:Weekly ;
+    ex:інтенсивність ex:Moderate .
+
+ex:Workout_Strength_3 a ex:Workout ;
+    ex:вправа "Віджимання" ;
+    ex:спаленіКалорії 120 ;
+    ex:тривалість 10 ;
+    ex:інтенсивність ex:High .
+
+ex:Workout_Swimming a ex:CardioWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Beginner ;
+    ex:вправа "Swimming" ;
+    ex:категорія "Cardio" ;
+    ex:місцеТренування "Pool" ;
+    ex:необхіднеОбладнання "Swimsuit" ;
+    ex:підходитьДля ex:Goal_LoseWeight ;
+    ex:рівеньТренування ex:Intermediate ;
+    ex:спаленіКалорії "450.0"^^xsd:float ;
+    ex:тривалість 45 ;
+    ex:частотаТренування ex:Weekly ;
+    ex:інтенсивність ex:Moderate .
+
+ex:Workout_Yoga a ex:CardioWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Beginner ;
+    ex:вправа "Yoga Flow" ;
+    ex:категорія "Cardio" ;
+    ex:місцеТренування "Home" ;
+    ex:необхіднеОбладнання "Yoga Mat" ;
+    ex:підходитьДля ex:Goal_LoseWeight ;
+    ex:рівеньТренування ex:Beginner ;
+    ex:спаленіКалорії "200.0"^^xsd:float ;
+    ex:тривалість 30 ;
+    ex:частотаТренування ex:Weekly ;
+    ex:інтенсивність ex:Low .
+
+ex:Рмоа a ex:User ;
+    ex:вага "95.0"^^xsd:float ;
+    ex:вік 20 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.9"^^xsd:float ;
+    ex:маєРекомендацію ex:Workout_Beginner_1 ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:індексМасиТіла "26.3"^^xsd:float .
+
+ex:Рома a ex:User ;
+    ex:вага "90.0"^^xsd:float ;
+    ex:вік 22 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.9"^^xsd:float ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:індексМасиТіла "24.9"^^xsd:float .
+
+ex:вага a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:float .
+
+ex:виконанеТренування a owl:ObjectProperty ;
+    rdfs:domain ex:Progress ;
+    rdfs:range ex:Workout .
+
+ex:вимагаєДосвиду a owl:AnnotationProperty,
+        owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range ex:CompetencyLevel .
+
+ex:вправа a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:string .
+
+ex:вік a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:integer .
+
+ex:датаПрогресу a owl:DatatypeProperty ;
+    rdfs:domain ex:Progress ;
+    rdfs:range xsd:date .
+
+ex:датаРекомендації a owl:DatatypeProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range xsd:date .
+
+ex:досвід a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:CompetencyLevel .
+
+ex:досягнутіКалорії a owl:DatatypeProperty ;
+    rdfs:domain ex:Progress ;
+    rdfs:range xsd:float .
+
+ex:зріст a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:float .
+
+ex:категорія a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:string .
+
+ex:маєРекомендацію a owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:Workout ;
+    owl:inverseOf ex:рекомендуєтьсяДля .
+
+ex:маєЦіль a owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:TrainingGoal .
+
+ex:місцеТренування a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:string .
+
+ex:належитьКористувачу a owl:ObjectProperty ;
+    rdfs:domain ex:Progress ;
+    rdfs:range ex:User .
+
+ex:необхіднеОбладнання a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:string .
+
+ex:необхіднийРівеньДосвиду a owl:AnnotationProperty,
+        owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range ex:CompetencyLevel .
+
+ex:необхіднийТипТренування a owl:DatatypeProperty ;
+    rdfs:domain ex:TrainingGoal ;
+    rdfs:range xsd:string .
+
+ex:пріоритетРекомендації a owl:DatatypeProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range xsd:string .
+
+ex:підходитьДля a owl:ObjectProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range ex:TrainingGoal .
+
+ex:рекомендуєТренування a owl:ObjectProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range ex:Workout .
+
+ex:рекомендуєтьсяКористувачем a owl:ObjectProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range ex:User .
+
+ex:рівеньТренування a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range ex:CompetencyLevel .
+
+ex:рівеньФітнесу a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:CompetencyLevel .
+
+ex:спаленіКалорії a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:float .
+
+ex:типЦілі a owl:DatatypeProperty ;
+    rdfs:domain ex:TrainingGoal ;
+    rdfs:range xsd:string .
+
+ex:тривалість a owl:DatatypeProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range xsd:integer .
+
+ex:улюбленийТипТренування a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:string .
+
+ex:цільоваТривалість a owl:DatatypeProperty ;
+    rdfs:domain ex:TrainingGoal ;
+    rdfs:range xsd:integer .
+
+ex:цільовіКалорії a owl:DatatypeProperty ;
+    rdfs:domain ex:TrainingGoal ;
+    rdfs:range xsd:float .
+
+ex:частотаРекомендації a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Recommendation ;
+    rdfs:range ex:Frequency .
+
+ex:частотаТренування a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range ex:Frequency .
+
+ex:частотаТренувань a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:Frequency .
+
+ex:індексМасиТіла a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:float .
+
+ex:інтенсивність a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:Workout ;
+    rdfs:range ex:Intensity .
+
+ex:інтенсивністьЦілі a owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:domain ex:TrainingGoal ;
+    rdfs:range ex:Intensity .
+
+ex:MuscleGainGoal a owl:Class ;
+    rdfs:subClassOf ex:TrainingGoal .
+
+ex:User_Anna a ex:User,
+        owl:NamedIndividual ;
+    ex:вага "60.0"^^xsd:float ;
+    ex:вік 25 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.65"^^xsd:float ;
+    ex:маєРекомендацію ex:Workout_Strength ;
+    ex:маєЦіль ex:Goal_MuscleGain ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:улюбленийТипТренування "Strength" ;
+    ex:частотаТренувань ex:Biweekly ;
+    ex:індексМасиТіла "22.0"^^xsd:float .
+
+ex:WeightLossGoal a owl:Class ;
+    rdfs:subClassOf ex:TrainingGoal .
+
+ex:Workout_Beginner_1 a ex:Workout ;
+    ex:вправа "Присідання" ;
+    ex:спаленіКалорії 100 ;
+    ex:тривалість 15 ;
+    ex:інтенсивність ex:Low .
+
+ex:рекомендуєтьсяДля a owl:ObjectProperty .
+
+ex:Advanced a ex:CompetencyLevel,
+        owl:NamedIndividual .
+
+ex:Low a ex:Intensity,
+        owl:NamedIndividual .
+
+ex:StrengthWorkout a owl:Class ;
+    rdfs:subClassOf ex:Workout .
+
+ex:User_John a ex:User,
+        owl:NamedIndividual ;
+    ex:вага "70.0"^^xsd:float ;
+    ex:вік 30 ;
+    ex:досвід ex:Intermediate ;
+    ex:зріст "1.75"^^xsd:float ;
+    ex:маєРекомендацію ex:Workout_Cardio ;
+    ex:маєЦіль ex:Goal_LoseWeight ;
+    ex:рівеньФітнесу ex:Intermediate ;
+    ex:улюбленийТипТренування "Cardio" ;
+    ex:частотаТренувань ex:Weekly ;
+    ex:індексМасиТіла "22.9"^^xsd:float .
+
+ex:Workout_Strength a ex:StrengthWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Intermediate ;
+    ex:вправа "Weight Lifting" ;
+    ex:категорія "Strength" ;
+    ex:місцеТренування "Gym" ;
+    ex:необхіднеОбладнання "Dumbbells" ;
+    ex:підходитьДля ex:Goal_MuscleGain ;
+    ex:рівеньТренування ex:Advanced ;
+    ex:спаленіКалорії "350.0"^^xsd:float ;
+    ex:тривалість 60 ;
+    ex:частотаТренування ex:Biweekly ;
+    ex:інтенсивність ex:High .
+
+xsd:date a rdfs:Datatype .
+
+ex:Goal_MuscleGain a ex:MuscleGainGoal,
+        owl:NamedIndividual ;
+    ex:необхіднийТипТренування "Strength" ;
+    ex:типЦілі "Muscle Gain" ;
+    ex:цільоваТривалість 45 ;
+    ex:цільовіКалорії "300.0"^^xsd:float ;
+    ex:інтенсивністьЦілі ex:High .
+
+ex:Workout_Cardio a ex:CardioWorkout,
+        owl:NamedIndividual ;
+    ex:вимагаєДосвиду ex:Beginner ;
+    ex:вправа "Running" ;
+    ex:категорія "Cardio" ;
+    ex:місцеТренування "Outdoor" ;
+    ex:необхіднеОбладнання "None" ;
+    ex:підходитьДля ex:Goal_LoseWeight ;
+    ex:рівеньТренування ex:Intermediate ;
+    ex:спаленіКалорії "400.0"^^xsd:float ;
+    ex:тривалість 45 ;
+    ex:частотаТренування ex:Weekly ;
+    ex:інтенсивність ex:Moderate .
+
+ex:Biweekly a ex:Frequency,
+        owl:NamedIndividual .
+
+ex:CardioWorkout a owl:Class ;
+    rdfs:subClassOf ex:Workout .
+
+ex:High a ex:Intensity,
+        owl:NamedIndividual .
+
+ex:Moderate a ex:Intensity,
+        owl:NamedIndividual .
+
+ex:Goal_LoseWeight a ex:WeightLossGoal,
+        owl:NamedIndividual ;
+    ex:необхіднийТипТренування "Cardio" ;
+    ex:типЦілі "Weight Loss" ;
+    ex:цільоваТривалість 60 ;
+    ex:цільовіКалорії "500.0"^^xsd:float ;
+    ex:інтенсивністьЦілі ex:Moderate .
+
+ex:Intensity a owl:Class .
+
+ex:Progress a owl:Class ;
+    rdfs:label "Progress"@en .
+
+ex:Frequency a owl:Class .
+
+ex:Weekly a ex:Frequency,
+        owl:NamedIndividual .
+
+ex:Intermediate a ex:CompetencyLevel,
+        owl:NamedIndividual .
+
+ex:CompetencyLevel a owl:Class .
+
+ex:Recommendation a owl:Class ;
+    rdfs:label "Recommendation"@en .
+
+ex:TrainingGoal a owl:Class ;
+    rdfs:label "Training Goal"@en .
+
+ex:Beginner a ex:CompetencyLevel,
+        owl:NamedIndividual .
+
+ex:User a owl:Class ;
+    rdfs:label "User"@en ;
+    rdfs:comment "A person with fitness goals and training recommendations"@en .
+
+ex:Workout a owl:Class ;
+    rdfs:label "Workout"@en .
 
