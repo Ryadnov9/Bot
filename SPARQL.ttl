@@ -33,6 +33,13 @@ ex:Recommendation_2 a ex:Recommendation,
     ex:рекомендуєтьсяКористувачем ex:User_Anna ;
     ex:частотаРекомендації ex:Biweekly .
 
+ex:Workout_Boxing_5 a ex:Workout ;
+    ex:вправа "Удари в повітрі"@uk ;
+    ex:назва "Домашній бокс"@uk ;
+    ex:спаленіКалорії 200 ;
+    ex:тривалість 30 ;
+    ex:інтенсивність ex:High .
+
 ex:Workout_Cardio_2 a ex:Workout ;
     ex:вправа "Біг на місці" ;
     ex:спаленіКалорії 150 ;
@@ -45,6 +52,7 @@ ex:Workout_HIIT a ex:CardioWorkout,
     ex:вправа "High-Intensity Interval Training" ;
     ex:категорія "Cardio" ;
     ex:місцеТренування "Gym or Home" ;
+    ex:назва "Інтервальне кардіо HIIT"@uk ;
     ex:необхіднеОбладнання "None" ;
     ex:підходитьДля ex:Goal_LoseWeight ;
     ex:рівеньТренування ex:Advanced ;
@@ -53,12 +61,20 @@ ex:Workout_HIIT a ex:CardioWorkout,
     ex:частотаТренування ex:Biweekly ;
     ex:інтенсивність ex:High .
 
+ex:Workout_Pilates_6 a ex:Workout ;
+    ex:вправа "Розтяжка"@uk ;
+    ex:назва "Пілатес на гнучкість"@uk ;
+    ex:спаленіКалорії 110 ;
+    ex:тривалість 20 ;
+    ex:інтенсивність ex:Medium .
+
 ex:Workout_Squats a ex:StrengthWorkout,
         owl:NamedIndividual ;
     ex:вимагаєДосвиду ex:Beginner ;
     ex:вправа "Bodyweight Squats" ;
     ex:категорія "Strength" ;
     ex:місцеТренування "Home or Gym" ;
+    ex:назва "Присідання з власною вагою"@uk ;
     ex:необхіднеОбладнання "None" ;
     ex:підходитьДля ex:Goal_MuscleGain ;
     ex:рівеньТренування ex:Beginner ;
@@ -79,6 +95,7 @@ ex:Workout_Swimming a ex:CardioWorkout,
     ex:вправа "Swimming" ;
     ex:категорія "Cardio" ;
     ex:місцеТренування "Pool" ;
+    ex:назва "Плавання в басейні"@uk ;
     ex:необхіднеОбладнання "Swimsuit" ;
     ex:підходитьДля ex:Goal_LoseWeight ;
     ex:рівеньТренування ex:Intermediate ;
@@ -93,6 +110,7 @@ ex:Workout_Yoga a ex:CardioWorkout,
     ex:вправа "Yoga Flow" ;
     ex:категорія "Cardio" ;
     ex:місцеТренування "Home" ;
+    ex:назва "Йога флоу"@uk ;
     ex:необхіднеОбладнання "Yoga Mat" ;
     ex:підходитьДля ex:Goal_LoseWeight ;
     ex:рівеньТренування ex:Beginner ;
@@ -100,6 +118,30 @@ ex:Workout_Yoga a ex:CardioWorkout,
     ex:тривалість 30 ;
     ex:частотаТренування ex:Weekly ;
     ex:інтенсивність ex:Low .
+
+ex:Workout_Yoga_4 a ex:Workout ;
+    ex:вправа "Поза дерева"@uk ;
+    ex:назва "Йога для початківців"@uk ;
+    ex:спаленіКалорії 80 ;
+    ex:тривалість 25 ;
+    ex:інтенсивність ex:Low .
+
+ex:Денис a ex:User ;
+    ex:вага "85.0"^^xsd:float ;
+    ex:вік 25 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.8"^^xsd:float ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:індексМасиТіла "26.2"^^xsd:float .
+
+ex:Макс a ex:User ;
+    ex:вага "90.0"^^xsd:float ;
+    ex:вік 24 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.85"^^xsd:float ;
+    ex:маєРекомендацію ex:Workout_Cardio ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:індексМасиТіла "26.3"^^xsd:float .
 
 ex:Рмоа a ex:User ;
     ex:вага "95.0"^^xsd:float ;
@@ -117,6 +159,14 @@ ex:Рома a ex:User ;
     ex:зріст "1.9"^^xsd:float ;
     ex:рівеньФітнесу ex:Beginner ;
     ex:індексМасиТіла "24.9"^^xsd:float .
+
+ex:Я a ex:User ;
+    ex:вага "75.0"^^xsd:float ;
+    ex:вік 20 ;
+    ex:досвід ex:Beginner ;
+    ex:зріст "1.9"^^xsd:float ;
+    ex:рівеньФітнесу ex:Beginner ;
+    ex:індексМасиТіла "20.8"^^xsd:float .
 
 ex:вага a owl:DatatypeProperty ;
     rdfs:domain ex:User ;
@@ -305,9 +355,6 @@ ex:рекомендуєтьсяДля a owl:ObjectProperty .
 ex:Advanced a ex:CompetencyLevel,
         owl:NamedIndividual .
 
-ex:Low a ex:Intensity,
-        owl:NamedIndividual .
-
 ex:StrengthWorkout a owl:Class ;
     rdfs:subClassOf ex:Workout .
 
@@ -330,6 +377,7 @@ ex:Workout_Strength a ex:StrengthWorkout,
     ex:вправа "Weight Lifting" ;
     ex:категорія "Strength" ;
     ex:місцеТренування "Gym" ;
+    ex:назва "Силове тренування з гантелями"@uk ;
     ex:необхіднеОбладнання "Dumbbells" ;
     ex:підходитьДля ex:Goal_MuscleGain ;
     ex:рівеньТренування ex:Advanced ;
@@ -348,12 +396,25 @@ ex:Goal_MuscleGain a ex:MuscleGainGoal,
     ex:цільовіКалорії "300.0"^^xsd:float ;
     ex:інтенсивністьЦілі ex:High .
 
+ex:Low a ex:Intensity,
+        owl:NamedIndividual .
+
+ex:Biweekly a ex:Frequency,
+        owl:NamedIndividual .
+
+ex:CardioWorkout a owl:Class ;
+    rdfs:subClassOf ex:Workout .
+
+ex:Moderate a ex:Intensity,
+        owl:NamedIndividual .
+
 ex:Workout_Cardio a ex:CardioWorkout,
         owl:NamedIndividual ;
     ex:вимагаєДосвиду ex:Beginner ;
     ex:вправа "Running" ;
     ex:категорія "Cardio" ;
     ex:місцеТренування "Outdoor" ;
+    ex:назва "Біг на вулиці"@uk ;
     ex:необхіднеОбладнання "None" ;
     ex:підходитьДля ex:Goal_LoseWeight ;
     ex:рівеньТренування ex:Intermediate ;
@@ -362,18 +423,6 @@ ex:Workout_Cardio a ex:CardioWorkout,
     ex:частотаТренування ex:Weekly ;
     ex:інтенсивність ex:Moderate .
 
-ex:Biweekly a ex:Frequency,
-        owl:NamedIndividual .
-
-ex:CardioWorkout a owl:Class ;
-    rdfs:subClassOf ex:Workout .
-
-ex:High a ex:Intensity,
-        owl:NamedIndividual .
-
-ex:Moderate a ex:Intensity,
-        owl:NamedIndividual .
-
 ex:Goal_LoseWeight a ex:WeightLossGoal,
         owl:NamedIndividual ;
     ex:необхіднийТипТренування "Cardio" ;
@@ -381,6 +430,9 @@ ex:Goal_LoseWeight a ex:WeightLossGoal,
     ex:цільоваТривалість 60 ;
     ex:цільовіКалорії "500.0"^^xsd:float ;
     ex:інтенсивністьЦілі ex:Moderate .
+
+ex:High a ex:Intensity,
+        owl:NamedIndividual .
 
 ex:Intensity a owl:Class .
 
