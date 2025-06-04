@@ -13,6 +13,8 @@ from telegram.ext import (
 import rdflib
 import matplotlib.pyplot as plt
 import os
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import matplotlib.image as mpimg
 
 # Налаштування логування
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -26,38 +28,25 @@ RDF = rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 RDFS = rdflib.RDFS
 
 # Стани розмови
-NAME, AGE, HEIGHT, WEIGHT, WORKOUT_SELECTION, ADD_WORKOUT_NAME, ADD_WORKOUT_SELECTION, RECOMMENDATION_NAME, STAT_NAME, MYWORKOUTS_NAME = range(
-    10)
+NAME, AGE, HEIGHT, WEIGHT, WORKOUT_SELECTION, ADD_WORKOUT_NAME, ADD_WORKOUT_SELECTION, RECOMMENDATION_NAME, STAT_NAME, MYWORKOUTS_NAME = range(10)
 
 # Завантаження онтології і додавання базових тренувань
 try:
     g.parse("SPARQL.ttl", format="n3")
 
-
     def ensure_default_workouts():
         predefined = [
-            {"uri": "Workout_Beginner_1", "назва": "Ранкова зарядка", "exercise": "Присідання", "intensity": "Low",
-             "duration": None, "calories": 100, "sets": 3},
-            {"uri": "Workout_Cardio_2", "назва": "Кардіо біг", "exercise": "Біг на місці", "intensity": "Medium",
-             "duration": 20, "calories": 150, "sets": None},
-            {"uri": "Workout_Strength_3", "назва": "Силові віджимання", "exercise": "Віджимання", "intensity": "Висока",
-             "duration": None, "calories": 120, "sets": 5},
-            {"uri": "Workout_Yoga_4", "назва": "Йога для початківців", "exercise": "Поза дерева", "intensity": "Low",
-             "duration": 25, "calories": 80, "sets": None},
-            {"uri": "Workout_Boxing_5", "назва": "Домашній бокс", "exercise": "Удари в повітрі", "intensity": "Висока",
-             "duration": None, "calories": 200, "sets": 6},
-            {"uri": "Workout_Pilates_6", "назва": "Пілатес на гнучкість", "exercise": "Розтяжка", "intensity": "Medium",
-             "duration": None, "calories": 110, "sets": 3},
-            {"uri": "Workout_Squats", "назва": "Присідання з вагою тіла", "exercise": "Присідання з вагою тіла",
-             "intensity": "Moderate", "duration": None, "calories": 250.0, "sets": 6},
-            {"uri": "Workout_Swimming", "назва": "Плавання", "exercise": "Плавання", "intensity": "Moderate",
-             "duration": 45, "calories": 450.0, "sets": None},
-            {"uri": "Workout_Yoga", "назва": "Йога-флоу", "exercise": "Йога-флоу", "intensity": "Low", "duration": 30,
-             "calories": 200.0, "sets": None},
-            {"uri": "Workout_Cardio", "назва": "Біг", "exercise": "Біг", "intensity": "Moderate", "duration": 45,
-             "calories": 400.0, "sets": None},
-            {"uri": "Workout_Strength", "назва": "Підняття ваги", "exercise": "Підняття ваги", "intensity": "High",
-             "duration": None, "calories": 350.0, "sets": 5},
+            {"uri": "Workout_Beginner_1", "назва": "Ранкова зарядка", "exercise": "Присідання", "intensity": "Low", "duration": None, "calories": 100, "sets": 3},
+            {"uri": "Workout_Cardio_2", "назва": "Кардіо біг", "exercise": "Біг на місці", "intensity": "Medium", "duration": 20, "calories": 150, "sets": None},
+            {"uri": "Workout_Strength_3", "назва": "Силові віджимання", "exercise": "Віджимання", "intensity": "Висока", "duration": None, "calories": 120, "sets": 5},
+            {"uri": "Workout_Yoga_4", "назва": "Йога для початківців", "exercise": "Поза дерева", "intensity": "Low", "duration": 25, "calories": 80, "sets": None},
+            {"uri": "Workout_Boxing_5", "назва": "Домашній бокс", "exercise": "Удари в повітрі", "intensity": "Висока", "duration": None, "calories": 200, "sets": 6},
+            {"uri": "Workout_Pilates_6", "назва": "Пілатес на гнучкість", "exercise": "Розтяжка", "intensity": "Medium", "duration": None, "calories": 110, "sets": 3},
+            {"uri": "Workout_Squats", "назва": "Присідання з вагою тіла", "exercise": "Присідання з вагою тіла", "intensity": "Moderate", "duration": None, "calories": 250.0, "sets": 6},
+            {"uri": "Workout_Swimming", "назва": "Плавання", "exercise": "Плавання", "intensity": "Moderate", "duration": 45, "calories": 450.0, "sets": None},
+            {"uri": "Workout_Yoga", "назва": "Йога-флоу", "exercise": "Йога-флоу", "intensity": "Low", "duration": 30, "calories": 200.0, "sets": None},
+            {"uri": "Workout_Cardio", "назва": "Біг", "exercise": "Біг", "intensity": "Moderate", "duration": 45, "calories": 400.0, "sets": None},
+            {"uri": "Workout_Strength", "назва": "Підняття ваги", "exercise": "Підняття ваги", "intensity": "High", "duration": None, "calories": 350.0, "sets": 5},
         ]
 
         for w in predefined:
@@ -74,8 +63,7 @@ try:
                 g.add((workout_uri, EX.спаленіКалорії, rdflib.Literal(w["calories"], datatype=XSD.float)))
 
         # Додаткові налаштування інтенсивності
-        for uri, label in [("Low", "Низька"), ("Medium", "Середня"), ("High", "Висока"), ("Moderate", "Середня"),
-                           ("Висока", "Висока")]:
+        for uri, label in [("Low", "Низька"), ("Medium", "Середня"), ("High", "Висока"), ("Moderate", "Середня"), ("Висока", "Висока")]:
             intensity_uri = EX[uri]
             if (intensity_uri, RDF.type, EX.Intensity) not in g:
                 g.add((intensity_uri, RDF.type, EX.Intensity))
@@ -84,9 +72,8 @@ try:
         g.serialize("SPARQL.ttl", format="n3")
 
 except Exception as e:
-    logger.error(f"Помилка завантаження онтології: {e}")
+    logger.error(f"🚨 Помилка завантаження онтології: {e}")
     raise
-
 
 # Команди
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -103,7 +90,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "ℹ️ /help — Допомога / список команд"
     )
 
-
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📋 Список доступних команд:\n\n"
@@ -117,7 +103,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "❌ /cancel — Скасувати поточну операцію\n"
         "ℹ️ /help — Показати це повідомлення"
     )
-
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = """
@@ -138,11 +123,9 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text += f"👤 {name} — Вік: {r.age}, Зріст: {r.height}, Вага: {r.weight}, ІМТ: {r.bmi}, Рівень: {r.fitnessLevel.split('#')[-1]}\n"
     await update.message.reply_text(text or "👥 Немає користувачів.")
 
-
 async def create_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🏃 Введіть ім’я користувача:")
     return NAME
-
 
 async def receive_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = update.message.text.strip()
@@ -156,7 +139,6 @@ async def receive_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("📅 Вік:")
     return AGE
 
-
 async def receive_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         age = int(update.message.text)
@@ -169,7 +151,6 @@ async def receive_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Некоректно. Спробуйте ще раз:")
         return AGE
 
-
 async def receive_height(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         height = float(update.message.text)
@@ -181,7 +162,6 @@ async def receive_height(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except:
         await update.message.reply_text("❌ Некоректно. Спробуйте ще раз:")
         return HEIGHT
-
 
 async def receive_weight(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
@@ -208,15 +188,12 @@ async def receive_weight(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Некоректно. Спробуйте ще раз:")
         return WEIGHT
 
-
 async def list_workouts(update, context, select_state):
     q = "PREFIX ex: <http://example.org/training#> SELECT ?w WHERE { ?w a ?t . ?t rdfs:subClassOf* ex:Workout . }"
     res = g.query(q, initNs={"ex": EX, "rdfs": RDFS})
     workouts = []
     for row in res:
         wid = row.w
-
-        # Отримуємо українську назву тренування
         label_query = f"""
         PREFIX ex: <http://example.org/training#>
         SELECT ?назва WHERE {{
@@ -225,53 +202,49 @@ async def list_workouts(update, context, select_state):
         """
         label_result = g.query(label_query)
         title = next(iter(label_result))[0] if label_result else wid.split('#')[-1]
-
         wid = wid.split('#')[-1]
         workouts.append((wid, str(title)))
     context.user_data["available_workouts"] = [w[0] for w in workouts]
     context.user_data["workout_names"] = workouts
-    txt = "\n".join([f"{i + 1}. {w[1]}" for i, w in enumerate(workouts)])
-    await update.message.reply_text(f"🏋️ Оберіть тренування:\n{txt}")
+    txt = "\n".join([f"{i+1}. {w[1]}" for i, w in enumerate(workouts)])
+    await update.message.reply_text(f"🏋️ Оберіть тренування (введіть номери через кому, наприклад, 1,3,5):\n{txt}")
     return select_state
-
 
 async def receive_workout_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        index = int(update.message.text.strip()) - 1
+        user_input = update.message.text.strip()
+        selected_indices = [int(i.strip()) - 1 for i in user_input.split(',') if i.strip().isdigit()]
         workouts = context.user_data["available_workouts"]
-        if not (0 <= index < len(workouts)):
+        if not selected_indices or any(i < 0 or i >= len(workouts) for i in selected_indices):
             raise ValueError
 
-        workout_name = workouts[index]
+        workout_names = context.user_data["workout_names"]
         user_name = context.user_data["new_user"]
+        selected_workouts = [workouts[i] for i in selected_indices]
 
-        # Додаємо зв’язок користувач -> тренування
-        g.add((EX[user_name], EX.маєРекомендацію, EX[workout_name]))
-        g.serialize(destination="SPARQL.ttl", format="n3")
+        for workout_name in selected_workouts:
+            g.add((EX[user_name], EX.маєРекомендацію, EX[workout_name]))
+            label_query = f"""
+            PREFIX ex: <http://example.org/training#>
+            SELECT ?назва WHERE {{
+                ex:{workout_name} ex:назва ?назва .
+            }}
+            """
+            label_result = g.query(label_query)
+            workout_label = next(iter(label_result))[0] if label_result else workout_name
+            await update.message.reply_text(f"✅ Додано тренування {workout_label} для {user_name}.")
 
-        # Отримуємо назву тренування (ex:назва), якщо вона є
-        label_query = f"""
-        PREFIX ex: <http://example.org/training#>
-        SELECT ?назва WHERE {{
-            ex:{workout_name} ex:назва ?назва .
-        }}
-        """
-        label_result = g.query(label_query)
-        workout_label = next(iter(label_result))[0] if label_result else workout_name
-
-        await update.message.reply_text(f"✅ Додано тренування {workout_label} для {user_name}.")
+        g.serialize("SPARQL.ttl", format="n3")
         context.user_data.clear()
         return ConversationHandler.END
 
     except:
-        await update.message.reply_text("❌ Некоректний номер. Спробуйте ще раз:")
+        await update.message.reply_text("❌ Некоректний ввід. Введіть номери через кому (наприклад, 1,3,5) у межах доступного списку:")
         return WORKOUT_SELECTION
-
 
 async def add_workout(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🏋️ Введіть ім’я користувача:")
     return ADD_WORKOUT_NAME
-
 
 async def receive_add_workout_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = update.message.text.strip()
@@ -284,37 +257,41 @@ async def receive_add_workout_name(update: Update, context: ContextTypes.DEFAULT
     context.user_data["new_user"] = name
     return await list_workouts(update, context, select_state=ADD_WORKOUT_SELECTION)
 
-
 async def receive_additional_workout(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        i = int(update.message.text) - 1
-        workout = context.user_data["available_workouts"][i]
+        user_input = update.message.text.strip()
+        selected_indices = [int(i.strip()) - 1 for i in user_input.split(',') if i.strip().isdigit()]
+        workouts = context.user_data["available_workouts"]
+        if not selected_indices or any(i < 0 or i >= len(workouts) for i in selected_indices):
+            raise ValueError
+
+        workout_names = context.user_data["workout_names"]
         user = context.user_data["new_user"]
-        g.add((EX[user], EX.маєРекомендацію, EX[workout]))
+        selected_workouts = [workouts[i] for i in selected_indices]
+
+        for workout_name in selected_workouts:
+            g.add((EX[user], EX.маєРекомендацію, EX[workout_name]))
+            label_query = f"""
+            PREFIX ex: <http://example.org/training#>
+            SELECT ?назва WHERE {{
+                ex:{workout_name} ex:назва ?назва .
+            }}
+            """
+            label_result = g.query(label_query)
+            workout_label = next(iter(label_result))[0] if label_result else workout_name
+            await update.message.reply_text(f"✅ Додано тренування {workout_label} для {user}.")
+
         g.serialize("SPARQL.ttl", format="n3")
-
-        # Отримуємо назву тренування українською мовою
-        label_query = f"""
-        PREFIX ex: <http://example.org/training#>
-        SELECT ?назва WHERE {{
-            ex:{workout} ex:назва ?назва .
-        }}
-        """
-        label_result = g.query(label_query)
-        workout_label = next(iter(label_result))[0] if label_result else workout
-
-        await update.message.reply_text(f"✅ Додано тренування {workout_label} для {user}.")
         context.user_data.clear()
         return ConversationHandler.END
-    except:
-        await update.message.reply_text("❌ Спробуйте ще раз:")
-        return ADD_WORKOUT_SELECTION
 
+    except:
+        await update.message.reply_text("❌ Спробуйте ще раз: введіть номери через кому (наприклад, 1,3,5):")
+        return ADD_WORKOUT_SELECTION
 
 async def recommendations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("📋 Введіть ім’я користувача:")
     return RECOMMENDATION_NAME
-
 
 async def receive_recommendation_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.message.text.strip()
@@ -352,7 +329,6 @@ async def receive_recommendation_name(update: Update, context: ContextTypes.DEFA
         exercise = str(row.вправа) if row.вправа else "—"
         calories = str(row.калорії) if row.калорії else "?"
 
-        # Визначаємо, що відображати: тривалість чи кількість підходів
         if row.тривалість:
             duration_or_sets = f"{row.тривалість} хв"
         elif row.кількістьПідходів:
@@ -360,7 +336,6 @@ async def receive_recommendation_name(update: Update, context: ContextTypes.DEFA
         else:
             duration_or_sets = "невідомо"
 
-        # Отримуємо український label інтенсивності
         intensity_label = None
         if row.інтенсивність:
             labels = list(g.objects(row.інтенсивність, RDFS.label))
@@ -375,11 +350,9 @@ async def receive_recommendation_name(update: Update, context: ContextTypes.DEFA
     await update.message.reply_text(reply)
     return ConversationHandler.END
 
-
 async def myworkouts_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("💪 Введіть ім’я користувача:")
     return MYWORKOUTS_NAME
-
 
 async def myworkouts_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.message.text.strip()
@@ -413,11 +386,9 @@ async def myworkouts_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(reply)
     return ConversationHandler.END
 
-
 async def show_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("📊 Введіть ім’я користувача для перегляду статистики:")
     return STAT_NAME
-
 
 async def receive_stat_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.message.text.strip()
@@ -468,9 +439,7 @@ async def receive_stat_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
     # Перша вісь Y: калорії
-    ax1.bar(labels, calories_data,
-            color=['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#4BC0C0', '#FF6384', '#36A2EB',
-                   '#FFCE56', '#9966FF'])
+    ax1.bar(labels, calories_data, color=['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#4BC0C0', '#FF6384', '#36A2EB', '#FFCE56', '#9966FF'])
     ax1.set_xlabel('Тренування')
     ax1.set_ylabel('Калорії', color='#FF6384')
     ax1.tick_params(axis='y', labelcolor='#FF6384')
@@ -484,8 +453,15 @@ async def receive_stat_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ax2.tick_params(axis='y', labelcolor='#36A2EB')
     ax2.legend(loc='upper right')
 
+    # Додавання логотипу (зображення)
+    logo_path = "logo.png"  # Шлях до вашої картинки (потрібно завантажити її)
+    logo_img = mpimg.imread(logo_path)
+    imagebox = OffsetImage(logo_img, zoom=0.1)
+    ab = AnnotationBbox(imagebox, (1, 1), xycoords='axes fraction', frameon=False, box_alignment=(1, 1))
+    ax1.add_artist(ab)
+
     # Заголовок і налаштування
-    plt.title(f'Порівняння спалених калорій та ваги для {user_name}')
+    plt.title(f'📊 Порівняння спалених калорій та ваги для {user_name}')
     plt.tight_layout()
 
     # Збереження графіка у тимчасовий файл
@@ -495,20 +471,17 @@ async def receive_stat_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Надсилання графіка
     with open(chart_path, 'rb') as chart_file:
-        await update.message.reply_photo(photo=chart_file,
-                                         caption=f"📊 Порівняння спалених калорій та ваги для {user_name}")
+        await update.message.reply_photo(photo=chart_file, caption=f"📊 Порівняння спалених калорій та ваги для {user_name}")
 
     # Видалення тимчасового файлу
     os.remove(chart_path)
 
     return ConversationHandler.END
 
-
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await update.message.reply_text("❌ Скасовано.")
     return ConversationHandler.END
-
 
 def main():
     app = Application.builder().token("7973391875:AAHAT7xxc3TWp2ABRI-J3b5_0DhX-FPMWJ4").build()
@@ -587,7 +560,6 @@ def main():
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("users", users))
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
